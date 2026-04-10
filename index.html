@@ -1,0 +1,2115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ForgeToken ($FRG) - The Next 1000x on Ethereum</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.9.0/dist/ethers.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Arial Black', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #0a0a0a 100%);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(2px 2px at 60% 70%, white, transparent),
+                radial-gradient(1px 1px at 50% 50%, white, transparent);
+            background-size: 200% 200%;
+            animation: twinkle 5s ease-in-out infinite;
+            opacity: 0.4;
+            z-index: 0;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Navigation Header */
+        .nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 2px solid #ff6b35;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            font-size: 40px;
+        }
+
+        .logo-text {
+            font-size: 1.8em;
+            background: linear-gradient(45deg, #ff6b35, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #ffd700;
+        }
+
+        .buy-header-btn {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            padding: 12px 30px;
+            border-radius: 50px;
+            color: #fff;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .buy-header-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 30px;
+            height: 3px;
+            background: #ffd700;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 350px;
+            height: 100vh;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 100%);
+            backdrop-filter: blur(10px);
+            padding: 100px 40px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            z-index: 1000;
+            transition: right 0.4s ease;
+            border-left: 3px solid #ff6b35;
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.5em;
+            font-weight: bold;
+            padding: 15px 20px;
+            border-radius: 10px;
+            background: rgba(255, 107, 53, 0.1);
+            border: 2px solid #ff6b35;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .mobile-nav-link:hover {
+            background: rgba(255, 107, 53, 0.3);
+            border-color: #ffd700;
+            transform: translateX(-5px);
+        }
+
+        .mobile-nav-link:first-child {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            border: none;
+            color: #fff;
+        }
+
+        /* Network Badge */
+        .network-badge {
+            position: fixed;
+            top: 90px;
+            right: 40px;
+            background: linear-gradient(135deg, #627eea, #4c6bbf);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.9em;
+            font-weight: bold;
+            border: 2px solid #8fa3d6;
+            z-index: 999;
+            display: none;
+        }
+
+        .network-badge.wrong-network {
+            background: linear-gradient(135deg, #ff6b35, #dc143c);
+            border-color: #ff6b35;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Top Banner */
+        .top-banner {
+            margin-top: 80px;
+            background: linear-gradient(90deg, #ff6b35, #f7931e, #ffd700, #f7931e, #ff6b35);
+            background-size: 200% 100%;
+            animation: slide 3s linear infinite;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        @keyframes slide {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        /* Main Hero Section - COMPACT */
+        .hero-section {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 50px;
+            max-width: 1400px;
+            margin: 60px auto;
+            padding: 40px;
+            align-items: start;
+        }
+
+        /* Presale Card - COMPACT Professional Style */
+        .presale-card {
+            background: linear-gradient(135deg, #2a1810 0%, #1a0f08 100%);
+            border: 5px solid #8b4513;
+            border-radius: 20px;
+            padding: 25px 20px;
+            box-shadow: 
+                0 0 40px rgba(255, 107, 53, 0.4),
+                inset 0 0 30px rgba(139, 69, 19, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .presale-card::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            border: 2px solid #d4a574;
+            border-radius: 15px;
+            pointer-events: none;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #d4a574, #b8935f);
+            padding: 12px 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 15px;
+            border: 2px solid #8b4513;
+        }
+
+        .card-title {
+            color: #2a1810;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .countdown-compact {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .countdown-box {
+            text-align: center;
+        }
+
+        .countdown-label-small {
+            font-size: 0.65em;
+            color: #2a1810;
+            font-weight: bold;
+        }
+
+        .countdown-value {
+            font-size: 1.3em;
+            color: #2a1810;
+            font-weight: bold;
+        }
+
+        /* Raised Amount - COMPACT */
+        .raised-display {
+            background: linear-gradient(135deg, #d4a574, #b8935f);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 12px;
+            border: 2px solid #8b4513;
+        }
+
+        .raised-amount-big {
+            font-size: 1.6em;
+            color: #8b0000;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 3px;
+        }
+
+        .raised-label {
+            font-size: 0.75em;
+            color: #2a1810;
+            font-weight: bold;
+        }
+
+        .total-supply {
+            font-size: 0.8em;
+            color: #8b0000;
+            font-weight: bold;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 2px solid rgba(139, 69, 19, 0.3);
+        }
+
+        /* Your Purchased Display - COMPACT */
+        .purchased-section {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .purchased-label {
+            color: #d4a574;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+        }
+
+        .purchased-value {
+            font-size: 1.8em;
+            color: #ffd700;
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+        }
+
+        /* Input Section - COMPACT */
+        .input-section {
+            margin: 12px 0;
+        }
+
+        .input-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            color: #d4a574;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .network-input {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #d4a574, #b8935f);
+            border: 2px solid #8b4513;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2a1810;
+            font-family: inherit;
+            text-align: center;
+        }
+
+        .network-input:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Receive Boxes - COMPACT */
+        .receive-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .receive-box {
+            background: linear-gradient(135deg, #d4a574, #b8935f);
+            border: 2px solid #8b4513;
+            border-radius: 10px;
+            padding: 12px 10px;
+            text-align: center;
+        }
+
+        .receive-label {
+            font-size: 0.7em;
+            color: #2a1810;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .receive-amount {
+            font-size: 1.4em;
+            color: #8b0000;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* Bonus Message - COMPACT */
+        .bonus-message {
+            background: rgba(255, 193, 7, 0.2);
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            color: #ffd700;
+            font-size: 0.75em;
+            margin: 12px 0;
+            line-height: 1.3;
+        }
+
+        /* Tier Badges - COMPACT */
+        .tier-section {
+            margin: 12px 0;
+        }
+
+        .tier-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .tier-badge {
+            background: linear-gradient(135deg, #8b4513, #654321);
+            border: 2px solid #d4a574;
+            border-radius: 15px;
+            padding: 6px 4px;
+            text-align: center;
+            font-size: 0.7em;
+            font-weight: bold;
+            color: #d4a574;
+        }
+
+        .tier-badge.active {
+            background: linear-gradient(135deg, #dc143c, #8b0000);
+            border-color: #ff6b35;
+            color: #ffd700;
+        }
+
+        .tier-label-row {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .tier-label {
+            color: #d4a574;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        .frame-badges {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+        }
+
+        .frame-badge {
+            padding: 6px 4px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 0.65em;
+            font-weight: bold;
+            border: 2px solid;
+        }
+
+        .frame-common {
+            background: linear-gradient(135deg, #808080, #606060);
+            border-color: #a0a0a0;
+            color: #fff;
+        }
+
+        .frame-rare {
+            background: linear-gradient(135deg, #4169e1, #1e3a8a);
+            border-color: #6495ed;
+            color: #fff;
+        }
+
+        .frame-golden {
+            background: linear-gradient(135deg, #ffd700, #b8860b);
+            border-color: #ffed4e;
+            color: #000;
+        }
+
+        .frame-legendary {
+            background: linear-gradient(135deg, #9370db, #4b0082);
+            border-color: #ba55d3;
+            color: #fff;
+        }
+
+        /* Action Buttons - COMPACT - Single Button */
+        .action-buttons {
+            margin-top: 15px;
+        }
+
+        .wallet-btn {
+            background: linear-gradient(135deg, #8b0000, #dc143c);
+            border: 2px solid #ff6b35;
+            padding: 12px;
+            border-radius: 50px;
+            color: #fff;
+            font-size: 0.9em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            width: 100%;
+        }
+
+        .wallet-btn:hover, .card-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .wallet-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .wallet-address {
+            font-size: 0.75em;
+            color: #d4a574;
+            text-align: center;
+            margin-top: 8px;
+            word-break: break-all;
+        }
+
+        /* Right Side Content */
+        .hero-content {
+            padding: 40px 0;
+        }
+
+        .main-title {
+            font-size: 4em;
+            background: linear-gradient(45deg, #ff6b35, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.8em;
+            color: #ffd700;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .description {
+            font-size: 1.2em;
+            line-height: 1.6;
+            color: #ccc;
+            margin-bottom: 30px;
+        }
+
+        .feature-list {
+            margin: 30px 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .feature-icon {
+            font-size: 1.5em;
+        }
+
+        .mascot-image {
+            position: absolute;
+            bottom: 20px;
+            right: 100px;
+            font-size: 180px;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
+            z-index: 10;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* NFT Section */
+        .nft-section {
+            max-width: 1400px;
+            margin: 80px auto;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(247, 147, 30, 0.1));
+            border: 3px solid #ff6b35;
+            border-radius: 25px;
+        }
+
+        /* Staking Section - Coming Soon */
+        .staking-section {
+            max-width: 1400px;
+            margin: 80px auto;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(247, 147, 30, 0.1));
+            border: 3px solid #ff6b35;
+            border-radius: 25px;
+            position: relative;
+        }
+
+        .coming-soon-badge {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            background: linear-gradient(135deg, #ffd700, #ff6b35);
+            color: #000;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); }
+            50% { box-shadow: 0 0 50px rgba(255, 215, 0, 0.9); }
+        }
+
+        .staking-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .staking-feature {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #ff6b35;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .staking-feature:hover {
+            transform: translateY(-10px);
+            border-color: #ffd700;
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.3);
+        }
+
+        .staking-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .staking-title {
+            font-size: 1.5em;
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .staking-description {
+            font-size: 1em;
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        .staking-tiers {
+            margin: 60px 0;
+        }
+
+        .tier-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+        }
+
+        .tier-card {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(30, 30, 30, 0.7));
+            border: 3px solid #8b4513;
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .tier-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.4);
+        }
+
+        .tier-card.featured-tier {
+            border-color: #ffd700;
+            border-width: 4px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .tier-card.legendary-tier {
+            border-color: #9370db;
+            border-width: 4px;
+            box-shadow: 0 0 30px rgba(147, 112, 219, 0.5);
+        }
+
+        .tier-name {
+            font-size: 1.8em;
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .tier-duration {
+            font-size: 1.2em;
+            color: #ff6b35;
+            margin-bottom: 20px;
+        }
+
+        .tier-apy {
+            font-size: 2.5em;
+            color: #32cd32;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 0 0 20px rgba(50, 205, 50, 0.6);
+        }
+
+        .tier-min {
+            font-size: 1em;
+            color: #ccc;
+            margin-top: 15px;
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .notify-section {
+            text-align: center;
+            margin-top: 60px;
+            padding: 40px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid #ffd700;
+            border-radius: 20px;
+        }
+
+        .notify-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: #fff;
+            padding: 18px 50px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        }
+
+        .notify-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 53, 0.6);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3em;
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.3em;
+            color: #ccc;
+            margin-bottom: 50px;
+        }
+
+        .nft-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .nft-card {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(30, 30, 30, 0.6));
+            border: 3px solid #8b4513;
+            border-radius: 20px;
+            padding: 20px;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .nft-card:hover {
+            transform: translateY(-10px);
+            border-color: #ffd700;
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.4);
+        }
+
+        .nft-card.featured {
+            border-color: #ffd700;
+            border-width: 4px;
+        }
+
+        .nft-card.legendary {
+            border-color: #9370db;
+            border-width: 4px;
+            box-shadow: 0 0 30px rgba(147, 112, 219, 0.5);
+        }
+
+        .nft-placeholder {
+            width: 100%;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #2a1810, #1a0f08);
+            border: 2px solid #d4a574;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .nft-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .nft-fallback {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #d4a574;
+            font-size: 1.5em;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .nft-info {
+            padding: 10px 0;
+        }
+
+        .nft-tier {
+            font-size: 1.3em;
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .nft-requirement {
+            font-size: 1em;
+            color: #ff6b35;
+        }
+
+        /* Tokenomics Section with Video */
+        .tokenomics-section {
+            max-width: 1400px;
+            margin: 80px auto;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(247, 147, 30, 0.1));
+            border: 3px solid #ff6b35;
+            border-radius: 25px;
+        }
+
+        .tokenomics-grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .tokenomics-breakdown {
+            display: grid;
+            gap: 20px;
+        }
+
+        .token-item {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .token-item:hover {
+            transform: translateX(10px);
+            border-color: #ff6b35;
+        }
+
+        .token-percentage {
+            font-size: 2.5em;
+            color: #ff6b35;
+            font-weight: bold;
+        }
+
+        .token-label {
+            font-size: 1.3em;
+            color: #fff;
+        }
+
+        .video-container {
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 3px solid #ffd700;
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.3);
+        }
+
+        .tokenomics-video, .whitepaper-video {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: #000;
+        }
+
+        .video-fallback {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            background: linear-gradient(135deg, #2a1810, #1a0f08);
+            color: #d4a574;
+            font-size: 2em;
+            text-align: center;
+            padding: 40px;
+        }
+
+        /* Whitepaper Section */
+        .whitepaper-section {
+            max-width: 1400px;
+            margin: 80px auto;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(247, 147, 30, 0.1));
+            border: 3px solid #ff6b35;
+            border-radius: 25px;
+        }
+
+        .whitepaper-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        .whitepaper-content {
+            padding: 20px;
+        }
+
+        .download-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: #fff;
+            padding: 18px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 53, 0.6);
+        }
+
+        /* Social Media Section */
+        .social-section {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .social-card {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(247, 147, 30, 0.2));
+            border: 3px solid #ff6b35;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: block;
+        }
+
+        .social-card:hover {
+            transform: translateY(-10px);
+            border-color: #ffd700;
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.4);
+        }
+
+        .social-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .social-name {
+            font-size: 1.5em;
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .social-handle {
+            font-size: 1.1em;
+            color: #ccc;
+        }
+
+        @media (max-width: 1200px) {
+            .hero-section {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+
+            .presale-card {
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+            .main-title {
+                font-size: 2.5em;
+            }
+
+            .mascot-image {
+                display: none;
+            }
+
+            .tokenomics-grid-layout,
+            .whitepaper-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .network-badge {
+                top: 140px;
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-header {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .countdown-compact {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .receive-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tier-row, .frame-badges {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .nft-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .social-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .staking-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tier-comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .coming-soon-badge {
+                position: static;
+                display: inline-block;
+                margin-bottom: 20px;
+            }
+
+            .network-badge {
+                top: 140px;
+                right: 10px;
+                font-size: 0.75em;
+                padding: 8px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+
+    <!-- Network Badge -->
+    <div class="network-badge" id="networkBadge">Ethereum Mainnet</div>
+
+    <!-- Navigation -->
+    <nav class="nav-header">
+        <div class="logo-section">
+            <div class="logo-icon">🔥⚒️</div>
+            <div class="logo-text">ForgeToken</div>
+        </div>
+        <div class="nav-links">
+            <a href="#about" class="nav-link">About</a>
+            <a href="#howtobuy" class="nav-link">How to Buy</a>
+            <a href="#nft" class="nav-link">NFT</a>
+            <a href="#staking" class="nav-link">Staking</a>
+            <a href="#tokenomics" class="nav-link">Tokenomics</a>
+            <a href="#whitepaper" class="nav-link">Litepaper</a>
+            <a href="#buy" class="buy-header-btn">Buy $FRG</a>
+        </div>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#buy" class="mobile-nav-link">Buy $FRG</a>
+        <a href="#about" class="mobile-nav-link">About</a>
+        <a href="#howtobuy" class="mobile-nav-link">How to Buy</a>
+        <a href="#nft" class="mobile-nav-link">NFT</a>
+        <a href="#staking" class="mobile-nav-link">Staking</a>
+        <a href="#tokenomics" class="mobile-nav-link">Tokenomics</a>
+        <a href="#whitepaper" class="mobile-nav-link">Litepaper</a>
+    </div>
+
+    <!-- Top Banner -->
+    <div class="top-banner">
+        🔥 START YOUR JOURNEY NOW! MORE $FRG, MORE REWARDS, MORE GLORY 🔥
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="buy">
+        <!-- Left: Presale Card -->
+        <div class="presale-card">
+            <div class="card-header">
+                <div class="card-title">Price Increasing In</div>
+                <div class="countdown-compact">
+                    <div class="countdown-box">
+                        <div class="countdown-label-small">Days</div>
+                        <div class="countdown-value" id="days">00</div>
+                    </div>
+                    <div class="countdown-box">
+                        <div class="countdown-label-small">Hours</div>
+                        <div class="countdown-value" id="hours">00</div>
+                    </div>
+                    <div class="countdown-box">
+                        <div class="countdown-label-small">Minutes</div>
+                        <div class="countdown-value" id="minutes">00</div>
+                    </div>
+                    <div class="countdown-box">
+                        <div class="countdown-label-small">Seconds</div>
+                        <div class="countdown-value" id="seconds">00</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="raised-display">
+                <div class="raised-amount-big" id="totalRaised">Loading...</div>
+                <div class="raised-label">Current Stage: <span id="currentStage">0</span></div>
+                <div class="total-supply">Presale Supply: 6,000,000,000 $FRG</div>
+            </div>
+
+            <div class="purchased-section">
+                <div class="purchased-label">Your purchased $FRG</div>
+                <div class="purchased-value" id="purchasedTokens">0</div>
+            </div>
+
+            <div class="input-section">
+                <div class="input-header">
+                    <span>ETH Amount</span>
+                    <span id="maxBtn" style="cursor: pointer; color: #ff6b35;">Max</span>
+                </div>
+                <input type="number" class="network-input" id="ethInput" 
+                       placeholder="0" min="0.01" max="10" step="0.01" value="0">
+            </div>
+
+            <div class="receive-grid">
+                <div class="receive-box">
+                    <div class="receive-label">$FRG You receive</div>
+                    <div class="receive-amount">
+                        <span id="frgReceive">0</span>
+                        <span>🪙</span>
+                    </div>
+                </div>
+                <div class="receive-box">
+                    <div class="receive-label">Your Tier</div>
+                    <div class="receive-amount">
+                        <span id="nftTier">None</span>
+                        <span>🎨</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bonus-message" id="bonusMessage">
+                <strong>Connect wallet to see bonus tiers</strong>
+            </div>
+
+            <div class="tier-section">
+                <div class="tier-row">
+                    <div class="tier-badge" id="tier1">0.1 ETH+</div>
+                    <div class="tier-badge" id="tier2">0.2 ETH+</div>
+                    <div class="tier-badge" id="tier3">0.5 ETH+</div>
+                    <div class="tier-badge" id="tier4">1.0 ETH+</div>
+                </div>
+
+                <div class="tier-label-row">
+                    <span class="tier-label">Frame</span>
+                    <div class="frame-badges">
+                        <div class="frame-badge frame-common">Common</div>
+                        <div class="frame-badge frame-rare">Rare</div>
+                        <div class="frame-badge frame-golden">Golden</div>
+                        <div class="frame-badge frame-legendary">Legendary</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="wallet-btn" id="walletBtn" onclick="connectWallet()">Connect Wallet</button>
+                <div class="wallet-address" id="walletAddress"></div>
+            </div>
+        </div>
+
+        <!-- Right: Hero Content -->
+        <div class="hero-content">
+            <h1 class="main-title">FORGETOKEN (FRG)<br>PRESALE LIVE<br>BUILD THE EMPIRE</h1>
+            <p class="subtitle">Built on Ethereum. Powered by ForgeToken (FRG). The gateway to the ForgeKingdom launchpad.</p>
+            
+            <div class="description">
+                Secure your position before the next stage.
+            </div>
+
+            <h2 style="color: #ffd700; font-size: 2.5em; margin-bottom: 20px;">The ForgeToken Revolution</h2>
+            <p style="font-size: 1.2em; color: #ccc; margin-bottom: 30px;">
+                Battle-tested smart contracts. Transparent tokenomics. Community-driven growth.
+            </p>
+
+            <div class="feature-list">
+                <div class="feature-item">
+                    <span class="feature-icon">⚡</span>
+                    <span>Immediate $FRG delivery straight to your wallet via ERC20</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🔥</span>
+                    <span>Own the foundation: $FRG powers the entire ForgeKingdom ecosystem</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">👑</span>
+                    <span>Claim your legacy: Secure an exclusive NFT and etch your name in history</span>
+                </div>
+            </div>
+
+            <div class="mascot-image" style="position: absolute; top: 20px; right: 20px; font-size: 200px;">👑</div>
+        </div>
+    </section>
+
+    <!-- About ForgeToken Section -->
+    <section class="whitepaper-section" id="about">
+        <h2 class="section-title">⚒️ ABOUT FORGETOKEN ⚒️</h2>
+        <p class="section-subtitle">
+            Forging the Future of Decentralized Capital on Ethereum
+        </p>
+        
+        <!-- Vision Box -->
+        <div style="margin-bottom: 50px; padding: 40px; background: rgba(255, 215, 0, 0.05); border: 2px solid #ffd700; border-radius: 20px;">
+            <h3 style="color: #ffd700; font-size: 1.8em; margin-bottom: 20px;">🔥 Our Vision</h3>
+            <p style="font-size: 1.15em; line-height: 1.9; color: #ccc; margin-bottom: 20px;">
+                ForgeToken (FRG) is designed to power a new standard for decentralized capital formation through ForgeKingdom.io. The protocol focuses on enabling structured participation in early-stage digital asset ecosystems with transparency, accessibility, and on-chain verification at its core.
+            </p>
+            <p style="font-size: 1.1em; line-height: 1.8; color: #d4a574; margin-bottom: 15px;">
+                <strong style="color: #ffd700;">The long-term vision includes:</strong>
+            </p>
+            <ul style="font-size: 1.1em; line-height: 2; color: #ccc; margin-left: 40px; list-style: none;">
+                <li style="margin-bottom: 10px;">⚒️ A structured launch environment for new digital assets</li>
+                <li style="margin-bottom: 10px;">⚒️ Transparent and verifiable capital participation systems</li>
+                <li style="margin-bottom: 10px;">⚒️ Community-aligned distribution mechanisms</li>
+                <li style="margin-bottom: 10px;">⚒️ Expansion into a full decentralized launchpad ecosystem</li>
+            </ul>
+            <p style="font-size: 1.15em; line-height: 1.9; color: #ccc; margin-top: 25px;">
+                FRG serves as the foundational asset driving this ecosystem, aligning early participants with long-term growth.
+            </p>
+        </div>
+
+        <!-- Token Overview Box -->
+        <div style="margin-bottom: 50px; padding: 40px; background: rgba(255, 107, 53, 0.05); border: 2px solid #ff6b35; border-radius: 20px;">
+            <h3 style="color: #ffd700; font-size: 1.8em; margin-bottom: 20px;">📊 Token Overview</h3>
+            <p style="font-size: 1.15em; line-height: 1.9; color: #ccc; margin-bottom: 30px;">
+                ForgeToken (FRG) is an ERC-20 asset deployed on the Ethereum Mainnet, designed to support both presale participation and long-term ecosystem development.
+            </p>
+            <div style="background: rgba(0, 0, 0, 0.3); padding: 35px; border-radius: 15px; border: 2px solid #d4a574;">
+                <p style="font-size: 1.2em; line-height: 2.2; color: #ccc; margin-bottom: 12px;">
+                    <strong style="color: #ffd700;">Token Name:</strong> ForgeToken
+                </p>
+                <p style="font-size: 1.2em; line-height: 2.2; color: #ccc; margin-bottom: 12px;">
+                    <strong style="color: #ffd700;">Ticker:</strong> $FRG
+                </p>
+                <p style="font-size: 1.2em; line-height: 2.2; color: #ccc; margin-bottom: 12px;">
+                    <strong style="color: #ffd700;">Network:</strong> Ethereum Mainnet
+                </p>
+                <p style="font-size: 1.2em; line-height: 2.2; color: #ccc; margin-bottom: 12px;">
+                    <strong style="color: #ffd700;">Standard:</strong> ERC-20
+                </p>
+                <p style="font-size: 1.2em; line-height: 2.2; color: #ccc;">
+                    <strong style="color: #ffd700;">Total Supply:</strong> 10,000,000,000 $FRG
+                </p>
+            </div>
+            <p style="font-size: 1.15em; line-height: 1.9; color: #ccc; margin-top: 30px;">
+                The total supply is fixed and structured to ensure transparent distribution between presale participants and post-launch ecosystem expansion.
+            </p>
+        </div>
+
+        <!-- Security Box -->
+        <div style="padding: 40px; background: rgba(50, 205, 50, 0.08); border: 2px solid #32cd32; border-radius: 20px;">
+            <h3 style="color: #ffd700; font-size: 1.8em; margin-bottom: 20px;">🛡️ Security & Internal Audit</h3>
+            <p style="font-size: 1.15em; line-height: 1.9; color: #ccc; margin-bottom: 20px;">
+                ForgeToken (FRG) smart contracts have undergone structured internal audit review and adversarial red team testing prior to mainnet deployment.
+            </p>
+            <p style="font-size: 1.15em; line-height: 1.9; color: #ccc; margin-bottom: 20px;">
+                Testing included validation of core contract behavior, transaction flows, and edge-case scenarios to ensure reliability and security under real-world conditions.
+            </p>
+            <p style="font-size: 1.15em; line-height: 1.9; color: #ccc; margin-bottom: 20px;">
+                All testing procedures were executed during development and validated through testnet environments before deployment to Ethereum Mainnet.
+            </p>
+            <p style="font-size: 1.15em; line-height: 1.9; color: #ccc; margin-bottom: 30px;">
+                All transactions remain fully transparent and verifiable on-chain.
+            </p>
+            <div style="background: rgba(255, 215, 0, 0.1); border: 2px solid #ffd700; border-radius: 15px; padding: 25px; text-align: center;">
+                <h4 style="color: #ffd700; font-size: 1.3em; margin-bottom: 15px;">🔍 Verify Contract on Etherscan</h4>
+                <p style="font-size: 1em; color: #ccc; margin-bottom: 15px;">
+                    ForgeToken Presale Contract Address:
+                </p>
+                <p style="font-size: 0.95em; color: #ff6b35; word-break: break-all; font-family: monospace; margin-bottom: 20px; line-height: 1.6;">
+                    0x18e90D4E47F5747d9977386d811A40EDc621fEDE
+                </p>
+                <a href="https://etherscan.io/address/0x18e90D4E47F5747d9977386d811A40EDc621fEDE" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: linear-gradient(135deg, #627eea, #4c6bbf); color: #fff; padding: 15px 35px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 1.1em; transition: all 0.3s; box-shadow: 0 5px 20px rgba(98, 126, 234, 0.4);">
+                    View on Etherscan →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How to Buy Section -->
+    <section class="whitepaper-section" id="howtobuy" style="margin-top: 80px;">
+        <h2 class="section-title">🛒 HOW TO BUY $FRG 🛒</h2>
+        <p class="section-subtitle">
+            Follow these simple steps to join the ForgeToken revolution
+        </p>
+        <div class="whitepaper-grid">
+            <div class="whitepaper-content">
+                <div style="display: flex; flex-direction: column; gap: 30px; padding: 20px;">
+                    <div style="display: flex; gap: 20px; align-items: start;">
+                        <div style="background: linear-gradient(135deg, #ff6b35, #f7931e); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; flex-shrink: 0;">1</div>
+                        <div>
+                            <h3 style="color: #ffd700; font-size: 1.5em; margin-bottom: 10px;">Connect Wallet</h3>
+                            <p style="font-size: 1.1em; line-height: 1.6; color: #ccc;">
+                                Click "Connect Wallet" button and select MetaMask. Make sure you're on Ethereum Mainnet.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 20px; align-items: start;">
+                        <div style="background: linear-gradient(135deg, #ff6b35, #f7931e); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; flex-shrink: 0;">2</div>
+                        <div>
+                            <h3 style="color: #ffd700; font-size: 1.5em; margin-bottom: 10px;">Choose Amount</h3>
+                            <p style="font-size: 1.1em; line-height: 1.6; color: #ccc;">
+                                Enter the amount of ETH you want to spend (minimum 0.01 ETH). The calculator will show you how many $FRG tokens you'll receive.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 20px; align-items: start;">
+                        <div style="background: linear-gradient(135deg, #ff6b35, #f7931e); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: bold; flex-shrink: 0;">3</div>
+                        <div>
+                            <h3 style="color: #ffd700; font-size: 1.5em; margin-bottom: 10px;">Buy $FRG Tokens</h3>
+                            <p style="font-size: 1.1em; line-height: 1.6; color: #ccc;">
+                                Click "Buy $FRG Now" and confirm the transaction in MetaMask. Your tokens will be delivered instantly to your wallet!
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255, 215, 0, 0.1); border: 2px solid #ffd700; border-radius: 15px; padding: 20px; margin-top: 20px;">
+                        <h4 style="color: #ffd700; font-size: 1.2em; margin-bottom: 10px;">📍 Presale Contract Address (Verify Before Buying):</h4>
+                        <p style="font-size: 0.95em; color: #ff6b35; word-break: break-all; font-family: monospace; line-height: 1.6;">
+                            0x18e90D4E47F5747d9977386d811A40EDc621fEDE
+                        </p>
+                        <p style="font-size: 0.9em; color: #ccc; margin-top: 10px;">
+                            ✅ Always verify this address on Etherscan before purchasing
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="video-container">
+                <img src="howtobuy-tutorial.jpeg" alt="How to Buy ForgeToken Tutorial" style="width: 100%; height: auto; display: block; border-radius: 20px;">
+            </div>
+        </div>
+    </section>
+
+    <!-- NFT Showcase Section -->
+    <section class="nft-section" id="nft">
+        <h2 class="section-title">🎨 EXCLUSIVE NFT COLLECTION 🎨</h2>
+        <p class="section-subtitle">
+            Unlock rare NFTs based on your contribution tier. Own a piece of ForgeToken history!
+        </p>
+        <div class="nft-grid">
+            <div class="nft-card">
+                <div class="nft-placeholder">
+                    <div class="nft-fallback">🖼️<br>Common Frame<br>0.1 ETH+</div>
+                </div>
+                <div class="nft-info">
+                    <div class="nft-tier">Common Frame</div>
+                    <div class="nft-requirement">0.1 ETH Investment</div>
+                </div>
+            </div>
+            <div class="nft-card">
+                <div class="nft-placeholder">
+                    <div class="nft-fallback">💎<br>Rare Frame<br>0.2 ETH+</div>
+                </div>
+                <div class="nft-info">
+                    <div class="nft-tier">Rare Frame</div>
+                    <div class="nft-requirement">0.2 ETH+ Investment</div>
+                </div>
+            </div>
+            <div class="nft-card featured">
+                <div class="nft-placeholder">
+                    <div class="nft-fallback">⭐<br>Golden Frame<br>0.5 ETH+</div>
+                </div>
+                <div class="nft-info">
+                    <div class="nft-tier">Golden Frame</div>
+                    <div class="nft-requirement">0.5 ETH+ Investment</div>
+                </div>
+            </div>
+            <div class="nft-card legendary">
+                <div class="nft-placeholder">
+                    <div class="nft-fallback">👑<br>Legendary Frame<br>1.0 ETH+</div>
+                </div>
+                <div class="nft-info">
+                    <div class="nft-tier">Legendary Frame</div>
+                    <div class="nft-requirement">1.0 ETH+ Investment</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Staking Section - Coming Soon -->
+    <section class="staking-section" id="staking">
+        <div class="coming-soon-badge">🔜 COMING SOON 🔜</div>
+        <h2 class="section-title">⚡ STAKING REWARDS ⚡</h2>
+        <p class="section-subtitle">
+            Stake your $FRG tokens and earn passive rewards. The longer you hold, the more you earn!
+        </p>
+        
+        <div class="staking-grid">
+            <div class="staking-feature">
+                <div class="staking-icon">💰</div>
+                <div class="staking-title">High APY Returns</div>
+                <div class="staking-description">
+                    Earn competitive annual percentage yields on your staked $FRG tokens
+                </div>
+            </div>
+            
+            <div class="staking-feature">
+                <div class="staking-icon">🔒</div>
+                <div class="staking-title">Flexible Lock Periods</div>
+                <div class="staking-description">
+                    Choose from multiple staking periods: 30, 90, 180, or 365 days
+                </div>
+            </div>
+            
+            <div class="staking-feature">
+                <div class="staking-icon">🎁</div>
+                <div class="staking-title">Bonus Multipliers</div>
+                <div class="staking-description">
+                    Longer staking periods earn higher rewards multipliers up to 200%
+                </div>
+            </div>
+            
+            <div class="staking-feature">
+                <div class="staking-icon">⚡</div>
+                <div class="staking-title">Instant Rewards</div>
+                <div class="staking-description">
+                    Claim your staking rewards anytime - paid directly to your wallet
+                </div>
+            </div>
+        </div>
+
+        <div class="staking-tiers">
+            <h3 style="text-align: center; color: #ffd700; font-size: 2em; margin-bottom: 30px;">Staking Tiers</h3>
+            <div class="tier-comparison">
+                <div class="tier-card">
+                    <div class="tier-name">Bronze</div>
+                    <div class="tier-duration">30 Days</div>
+                    <div class="tier-apy">15% APY</div>
+                    <div class="tier-min">Min: 1,000 $FRG</div>
+                </div>
+                <div class="tier-card">
+                    <div class="tier-name">Silver</div>
+                    <div class="tier-duration">90 Days</div>
+                    <div class="tier-apy">35% APY</div>
+                    <div class="tier-min">Min: 5,000 $FRG</div>
+                </div>
+                <div class="tier-card featured-tier">
+                    <div class="tier-name">Gold</div>
+                    <div class="tier-duration">180 Days</div>
+                    <div class="tier-apy">75% APY</div>
+                    <div class="tier-min">Min: 25,000 $FRG</div>
+                    <div class="popular-badge">POPULAR</div>
+                </div>
+                <div class="tier-card legendary-tier">
+                    <div class="tier-name">Diamond</div>
+                    <div class="tier-duration">365 Days</div>
+                    <div class="tier-apy">150% APY</div>
+                    <div class="tier-min">Min: 100,000 $FRG</div>
+                    <div class="popular-badge">BEST VALUE</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="notify-section">
+            <p style="font-size: 1.2em; margin-bottom: 20px;">
+                🔔 Want to be notified when staking goes live?
+            </p>
+            <a href="#buy" class="notify-btn">Join Presale & Get Early Access</a>
+        </div>
+    </section>
+
+    <!-- Tokenomics with Video -->
+    <section class="tokenomics-section" id="tokenomics">
+        <h2 class="section-title">🔥 TOKENOMICS 🔥</h2>
+        <p class="section-subtitle">
+            Transparent allocation of presale funds for maximum project growth and community value
+        </p>
+        <div class="tokenomics-grid-layout">
+            <div class="tokenomics-content">
+                <div class="tokenomics-breakdown">
+                    <div class="token-item">
+                        <div class="token-label">Liquidity Pool</div>
+                        <div class="token-percentage">40%</div>
+                    </div>
+                    <div class="token-item">
+                        <div class="token-label">Development & Infrastructure</div>
+                        <div class="token-percentage">25%</div>
+                    </div>
+                    <div class="token-item">
+                        <div class="token-label">Marketing & Partnerships</div>
+                        <div class="token-percentage">20%</div>
+                    </div>
+                    <div class="token-item">
+                        <div class="token-label">CEX Listings</div>
+                        <div class="token-percentage">10%</div>
+                    </div>
+                    <div class="token-item">
+                        <div class="token-label">Team & Operations</div>
+                        <div class="token-percentage">5%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="video-container">
+                <video controls poster="tokenomics-thumb.jpg" class="tokenomics-video">
+                    <source src="kingforgeadmire.mp4" type="video/mp4">
+                    <div class="video-fallback">
+                        🎬 Tokenomics Video<br>
+                        <small>Add tokenomics-explainer.mp4</small>
+                    </div>
+                </video>
+            </div>
+        </div>
+        
+        <!-- Fund Usage Details -->
+        <div style="margin-top: 60px;">
+            <h3 style="text-align: center; color: #ffd700; font-size: 2em; margin-bottom: 40px;">Fund Allocation Details</h3>
+            <div class="staking-grid">
+                <div class="staking-feature">
+                    <div class="staking-icon">💧</div>
+                    <div class="staking-title">Liquidity Pool (40%)</div>
+                    <div class="staking-description">
+                        Ensures deep liquidity on DEXs for stable trading and minimal slippage. Locked for 12 months.
+                    </div>
+                </div>
+                
+                <div class="staking-feature">
+                    <div class="staking-icon">🛠️</div>
+                    <div class="staking-title">Development (25%)</div>
+                    <div class="staking-description">
+                        Funding for smart contract audits, platform development, staking infrastructure, and NFT marketplace.
+                    </div>
+                </div>
+                
+                <div class="staking-feature">
+                    <div class="staking-icon">📢</div>
+                    <div class="staking-title">Marketing (20%)</div>
+                    <div class="staking-description">
+                        Strategic marketing campaigns, influencer partnerships, community events, and brand building.
+                    </div>
+                </div>
+                
+                <div class="staking-feature">
+                    <div class="staking-icon">🏦</div>
+                    <div class="staking-title">CEX Listings (10%)</div>
+                    <div class="staking-description">
+                        Reserved for centralized exchange listings to increase accessibility and trading volume.
+                    </div>
+                </div>
+                
+                <div class="staking-feature">
+                    <div class="staking-icon">👥</div>
+                    <div class="staking-title">Team & Operations (5%)</div>
+                    <div class="staking-description">
+                        Team compensation, legal, administrative costs, and ongoing operational expenses.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Litepaper with Video -->
+    <section class="whitepaper-section" id="whitepaper">
+        <h2 class="section-title">📄 LITEPAPER & VISION 📄</h2>
+        <div class="whitepaper-grid">
+            <div class="video-container">
+                <video controls poster="whitepaper-thumb.jpg" class="whitepaper-video">
+                    <source src="forgesmithforging.mp4" type="video/mp4">
+                    <div class="video-fallback">
+                        🎬 Litepaper Video<br>
+                        <small>Add litepaper-explainer.mp4</small>
+                    </div>
+                </video>
+            </div>
+            <div class="whitepaper-content">
+                <h3 style="color: #ffd700; font-size: 2em; margin-bottom: 20px;">The ForgeToken Vision</h3>
+                <p style="font-size: 1.1em; line-height: 1.8; margin-bottom: 20px;">
+                    ForgeToken isn't just another token. We're building a revolutionary ecosystem powered by the Ethereum blockchain, combining battle-tested security with massive rewards for our community.
+                </p>
+                <p style="font-size: 1.1em; line-height: 1.8; margin-bottom: 30px;">
+                    Our comprehensive litepaper details our tokenomics, roadmap, utility features, and the path to building an empire together. Join the Forge Army and rule the crypto empire!
+                </p>
+                <a href="forgetoken-litepaper.pdf" class="download-btn" download>
+                    📥 Download Litepaper
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Media Section -->
+    <section class="social-section">
+        <h2 class="section-title">🌐 JOIN THE FORGE ARMY! 🌐</h2>
+        <p class="section-subtitle">
+            Connect with our community and stay updated on the latest ForgeToken news
+        </p>
+        <div class="social-grid">
+            <a href="https://discord.gg/gfJeYswx" target="_blank" class="social-card">
+                <div class="social-icon">💬</div>
+                <div class="social-name">Discord</div>
+                <div class="social-handle">Join Our Server</div>
+            </a>
+            <a href="https://www.facebook.com/share/18eMsz9pcq/" target="_blank" class="social-card">
+                <div class="social-icon">📘</div>
+                <div class="social-name">Facebook</div>
+                <div class="social-handle">ForgeKingdom</div>
+            </a>
+            <a href="https://tiktok.com/@king.forge6" target="_blank" class="social-card">
+                <div class="social-icon">🎵</div>
+                <div class="social-name">TikTok</div>
+                <div class="social-handle">@king.forge6</div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: 40px 20px; color: #888; font-size: 0.9em; border-top: 2px solid rgba(255, 107, 53, 0.3); margin-top: 60px;">
+        <p>⚠️ Cryptocurrency investments carry risk. DYOR before investing.</p>
+        <p style="margin-top: 10px;">© 2026 ForgeToken. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // ==================== CONTRACT CONFIG ====================
+        // ✅ MAINNET DEPLOYMENTS
+        const PRESALE_CONTRACT_ADDRESS = '0x18e90D4E47F5747d9977386d811A40EDc621fEDE';
+        const TOKEN_CONTRACT_ADDRESS   = '0x00Af64Ba81bcddD06Ba3e43aBDadc58FeD8893A0';
+        
+        const MAINNET_CHAIN_ID = '0x1'; // Ethereum Mainnet
+        
+        // Infura Mainnet RPC
+        const READONLY_RPC_URL = 'https://mainnet.infura.io/v3/94d2b746c7774e6da1ff9bef6c26c182';
+
+        // ✅ Presale ABI (matches your ForgePresaleInstant.sol)
+        const PRESALE_ABI = [
+            "function buyTokens() external payable",
+            "function estimateTokens(uint256 ethAmount) external view returns (uint256)",
+            "function currentStage() external view returns (uint256)",
+            "function totalEthRaised() external view returns (uint256)",
+            "function ethSpent(address) external view returns (uint256)",
+            "function getBuyerTier(address) external view returns (uint8)",
+            "function presaleActive() external view returns (bool)"
+        ];
+
+        // ✅ Token ABI
+        const TOKEN_ABI = [
+            "function balanceOf(address) external view returns (uint256)",
+            "function decimals() external view returns (uint8)"
+        ];
+
+        // ==================== STATE ====================
+        let provider = null;
+        let signer = null;
+        let presaleContract = null;
+        let tokenContract = null;
+        let userAddress = null;
+        let readOnlyProvider = null;
+        let readOnlyPresaleContract = null;
+
+        // ==================== INIT READ-ONLY PROVIDER ====================
+        async function initReadOnlyProvider() {
+            try {
+                // Create read-only provider for public data (uses Alchemy for reliability)
+                readOnlyProvider = new ethers.JsonRpcProvider(READONLY_RPC_URL);
+                readOnlyPresaleContract = new ethers.Contract(
+                    PRESALE_CONTRACT_ADDRESS, 
+                    PRESALE_ABI, 
+                    readOnlyProvider
+                );
+                
+                // Load public presale data immediately
+                await loadPublicPresaleData();
+            } catch (error) {
+                console.error('Error initializing read-only provider:', error);
+            }
+        }
+
+        // Load public data (no wallet needed)
+        async function loadPublicPresaleData() {
+            try {
+                const stage = await readOnlyPresaleContract.currentStage();
+                const totalRaised = await readOnlyPresaleContract.totalEthRaised();
+                
+                document.getElementById('currentStage').textContent = stage.toString();
+                document.getElementById('totalRaised').textContent = 
+                    parseFloat(ethers.formatEther(totalRaised)).toFixed(4) + ' ETH Raised';
+            } catch (error) {
+                console.error('Error loading public presale data:', error);
+                document.getElementById('totalRaised').textContent = 'Loading...';
+            }
+        }
+
+        // ==================== COUNTDOWN ====================
+        const endDate = new Date();
+        endDate.setDate(endDate.getDate() + 7); // Price increases in 7 days
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = endDate.getTime() - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+
+        // ==================== WALLET CONNECTION ====================
+        async function connectWallet() {
+            try {
+                if (typeof window.ethereum === 'undefined') {
+                    alert('🚨 MetaMask not found! Please install MetaMask.');
+                    window.open('https://metamask.io/download/', '_blank');
+                    return;
+                }
+
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                userAddress = accounts[0];
+
+                provider = new ethers.BrowserProvider(window.ethereum);
+                signer = await provider.getSigner();
+
+                const network = await provider.getNetwork();
+                const chainId = '0x' + network.chainId.toString(16);
+
+                if (chainId !== MAINNET_CHAIN_ID) {
+                    await switchToMainnet();
+                    return;
+                }
+
+                presaleContract = new ethers.Contract(PRESALE_CONTRACT_ADDRESS, PRESALE_ABI, signer);
+                tokenContract = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, TOKEN_ABI, provider);
+
+                document.getElementById('walletBtn').textContent = 'Buy $FRG Now';
+                document.getElementById('walletBtn').onclick = buyTokens;
+                document.getElementById('walletAddress').textContent =
+                    userAddress.slice(0, 6) + '...' + userAddress.slice(-4);
+
+                document.getElementById('networkBadge').style.display = 'block';
+
+                await loadPresaleData();
+                await loadUserData();
+
+                alert('✅ Wallet connected successfully!');
+            } catch (error) {
+                console.error('Connection error:', error);
+                alert('❌ Failed to connect wallet: ' + (error?.message || error));
+            }
+        }
+
+        async function switchToMainnet() {
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: MAINNET_CHAIN_ID }],
+                });
+                await connectWallet();
+            } catch (switchError) {
+                alert('Please switch to Ethereum Mainnet manually in MetaMask');
+            }
+        }
+
+        // ==================== LOAD DATA ====================
+        async function loadPresaleData() {
+            try {
+                const stage = await presaleContract.currentStage();
+                const totalRaised = await presaleContract.totalEthRaised();
+
+                document.getElementById('currentStage').textContent = stage.toString();
+                document.getElementById('totalRaised').textContent =
+                    parseFloat(ethers.formatEther(totalRaised)).toFixed(4) + ' ETH Raised';
+            } catch (error) {
+                console.error('Error loading presale data:', error);
+            }
+        }
+
+        async function loadUserData() {
+            if (!userAddress || !tokenContract || !presaleContract) return;
+
+            try {
+                const balance = await tokenContract.balanceOf(userAddress);
+                const ethSpent = await presaleContract.ethSpent(userAddress);
+                const tier = await presaleContract.getBuyerTier(userAddress);
+
+                // NOTE: Your token likely uses 18 decimals, so formatEther is OK.
+                document.getElementById('purchasedTokens').textContent =
+                    parseFloat(ethers.formatEther(balance)).toLocaleString();
+
+                updateTierDisplay(parseFloat(ethers.formatEther(ethSpent)));
+
+                const tierNames = ['None', 'Common', 'Rare', 'Golden', 'Legendary'];
+                document.getElementById('nftTier').textContent = tierNames[Number(tier)] || 'None';
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        // ==================== CALCULATOR ====================
+        async function updateCalculator() {
+            const ethAmount = parseFloat(document.getElementById('ethInput').value) || 0;
+
+            if (ethAmount > 0 && presaleContract) {
+                try {
+                    const ethInWei = ethers.parseEther(ethAmount.toString());
+                    const tokensOut = await presaleContract.estimateTokens(ethInWei);
+
+                    document.getElementById('frgReceive').textContent =
+                        parseFloat(ethers.formatEther(tokensOut)).toLocaleString();
+                } catch (error) {
+                    console.error('Error estimating tokens:', error);
+                    document.getElementById('frgReceive').textContent = '0';
+                }
+            } else {
+                document.getElementById('frgReceive').textContent = '0';
+            }
+
+            updateTierDisplay(ethAmount);
+        }
+
+        function updateTierDisplay(ethAmount) {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`tier${i}`).classList.remove('active');
+            }
+
+            if (ethAmount >= 1.0) {
+                for (let i = 1; i <= 4; i++) document.getElementById(`tier${i}`).classList.add('active');
+                document.getElementById('bonusMessage').innerHTML = '<strong>🎉 LEGENDARY TIER UNLOCKED! Maximum rewards!</strong>';
+            } else if (ethAmount >= 0.5) {
+                for (let i = 1; i <= 3; i++) document.getElementById(`tier${i}`).classList.add('active');
+                document.getElementById('bonusMessage').innerHTML = '<strong>⭐ GOLDEN TIER! Spend ' + (1.0 - ethAmount).toFixed(2) + ' ETH more for Legendary!</strong>';
+            } else if (ethAmount >= 0.2) {
+                for (let i = 1; i <= 2; i++) document.getElementById(`tier${i}`).classList.add('active');
+                document.getElementById('bonusMessage').innerHTML = '<strong>💎 RARE TIER! Spend ' + (0.5 - ethAmount).toFixed(2) + ' ETH more for Golden!</strong>';
+            } else if (ethAmount >= 0.1) {
+                document.getElementById('tier1').classList.add('active');
+                document.getElementById('bonusMessage').innerHTML = '<strong>🖼️ COMMON TIER! Spend ' + (0.2 - ethAmount).toFixed(2) + ' ETH more for Rare!</strong>';
+            } else {
+                document.getElementById('bonusMessage').innerHTML = '<strong>Spend 0.1 ETH or more to unlock NFT rewards!</strong>';
+            }
+        }
+
+        // ==================== BUY TOKENS ====================
+        async function buyTokens() {
+            if (!signer || !presaleContract) {
+                alert('Please connect your wallet first');
+                return;
+            }
+
+            const ethAmount = parseFloat(document.getElementById('ethInput').value);
+
+            if (!ethAmount || ethAmount < 0.01) {
+                alert('⚠️ Minimum purchase is 0.01 ETH');
+                return;
+            }
+
+            if (ethAmount > 10) {
+                alert('⚠️ Maximum purchase is 10 ETH per transaction');
+                return;
+            }
+
+            try {
+                document.getElementById('walletBtn').disabled = true;
+                document.getElementById('walletBtn').textContent = 'Processing...';
+
+                const ethInWei = ethers.parseEther(ethAmount.toString());
+
+                // ✅ No hardcoded gasLimit (mainnet-safe)
+                const tx = await presaleContract.buyTokens({ value: ethInWei });
+
+                document.getElementById('walletBtn').textContent = 'Confirming...';
+                const receipt = await tx.wait();
+
+                if (receipt.status === 1) {
+                    alert('✅ Purchase successful! Your $FRG tokens have been sent to your wallet!');
+                    await loadPresaleData();
+                    await loadUserData();
+                    document.getElementById('ethInput').value = '0';
+                    updateCalculator();
+                } else {
+                    alert('❌ Transaction failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Purchase error:', error);
+
+                let errorMsg = 'Transaction failed';
+                const msg = (error?.shortMessage || error?.message || '').toLowerCase();
+
+                if (msg.includes('user rejected')) errorMsg = 'Transaction cancelled';
+                else if (msg.includes('insufficient funds')) errorMsg = 'Insufficient ETH balance';
+                else if (error?.shortMessage) errorMsg = error.shortMessage;
+                else if (error?.message) errorMsg = error.message;
+
+                alert('❌ ' + errorMsg);
+            } finally {
+                document.getElementById('walletBtn').disabled = false;
+                document.getElementById('walletBtn').textContent = 'Buy $FRG Now';
+            }
+        }
+
+        // ==================== MAX BUTTON ====================
+        document.getElementById('maxBtn').addEventListener('click', async () => {
+            if (!signer) {
+                alert('Please connect wallet first');
+                return;
+            }
+
+            try {
+                const balance = await provider.getBalance(userAddress);
+                const maxEth = parseFloat(ethers.formatEther(balance)) - 0.01;
+                const cappedMax = Math.min(maxEth, 10);
+
+                document.getElementById('ethInput').value = Math.max(cappedMax, 0).toFixed(4);
+                updateCalculator();
+            } catch (error) {
+                console.error('Error getting balance:', error);
+            }
+        });
+
+        // ==================== EVENT LISTENERS ====================
+        document.getElementById('ethInput').addEventListener('input', updateCalculator);
+
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) location.reload();
+                else {
+                    userAddress = accounts[0];
+                    connectWallet();
+                }
+            });
+
+            window.ethereum.on('chainChanged', () => location.reload());
+        }
+
+        // ==================== INIT ====================
+        // Wait for DOM to be ready before initializing read-only provider
+        window.addEventListener('DOMContentLoaded', () => {
+            initReadOnlyProvider();
+        });
+        
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // Refresh public data every 30 seconds
+        setInterval(() => {
+            if (readOnlyPresaleContract) {
+                loadPublicPresaleData();
+            }
+        }, 30000);
+
+        const observerOptions = { root: null, rootMargin: '0px', threshold: 0.5 };
+        const videoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const video = entry.target;
+                if (entry.isIntersecting) video.play().catch(() => {});
+                else video.pause();
+            });
+        }, observerOptions);
+
+        const videos = document.querySelectorAll('.tokenomics-video, .whitepaper-video');
+        videos.forEach(video => videoObserver.observe(video));
+
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        });
+
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
