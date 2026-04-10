@@ -1817,11 +1817,21 @@
 
         // ==================== COUNTDOWN ====================
         const endDate = new Date();
-        endDate.setDate(endDate.getDate() + 7); // Price increases in 7 days
+        // Add 24 hours
+        endDate.setTime(endDate.getTime() + (24 * 60 * 60 * 1000));
 
         function updateCountdown() {
             const now = new Date().getTime();
             const distance = endDate.getTime() - now;
+
+            if (distance < 0) {
+                // Countdown finished
+                document.getElementById('days').textContent = '00';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                return;
+            }
 
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
