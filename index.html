@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ForgeToken ($FRG) - The Next 1000x on Ethereum</title>
     <script src="https://cdn.jsdelivr.net/npm/ethers@6.9.0/dist/ethers.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -1756,7 +1758,7 @@
             Connect with our community and stay updated on the latest ForgeToken news
         </p>
         <div class="social-grid">
-            <a href="https://discord.gg/gfJeYswx" target="_blank" class="social-card">
+            <a href="https://discord.gg/xg2e5bNNWq" target="_blank" class="social-card">
                 <div class="social-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36">
                         <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
@@ -1892,13 +1894,25 @@
         }
 
         // ==================== WALLET CONNECTION ====================
-        async function connectWallet() {
-            try {
-                if (typeof window.ethereum === 'undefined') {
-                    alert('⚠️ No Ethereum wallet detected!\n\nPlease install one of these wallets:\n• MetaMask\n• Coinbase Wallet\n• Trust Wallet\n• Rainbow Wallet\n\nThen refresh this page.');
-                    return;
-                }
+        let walletConnectProvider = null;
 
+        async function connectWallet() {
+            // Check if on mobile
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            
+            // If desktop and has browser wallet, connect directly
+            if (!isMobile && typeof window.ethereum !== 'undefined') {
+                await connectBrowserWallet();
+            } 
+            // If mobile OR no browser wallet, use WalletConnect
+            else {
+                await connectWalletConnect();
+            }
+        }
+
+        // Connect to browser wallet (MetaMask extension, etc.)
+        async function connectBrowserWallet() {
+            try {
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 userAddress = accounts[0];
 
@@ -1930,6 +1944,68 @@
             } catch (error) {
                 console.error('Connection error:', error);
                 alert('❌ Failed to connect wallet: ' + (error?.message || error));
+            }
+        }
+
+        // Connect via WalletConnect (for mobile)
+        async function connectWalletConnect() {
+            try {
+                // Create WalletConnect Provider
+                walletConnectProvider = new WalletConnectProvider.default({
+                    rpc: {
+                        1: READONLY_RPC_URL // Ethereum mainnet
+                    },
+                    chainId: 1
+                });
+
+                // Enable session (triggers QR Code modal)
+                await walletConnectProvider.enable();
+
+                // Create ethers provider
+                provider = new ethers.BrowserProvider(walletConnectProvider);
+                signer = await provider.getSigner();
+                userAddress = await signer.getAddress();
+
+                presaleContract = new ethers.Contract(PRESALE_CONTRACT_ADDRESS, PRESALE_ABI, signer);
+                tokenContract = new ethers.Contract(TOKEN_CONTRACT_ADDRESS, TOKEN_ABI, provider);
+
+                document.getElementById('walletBtn').textContent = 'Buy $FRG Now';
+                document.getElementById('walletBtn').onclick = buyTokens;
+                document.getElementById('walletAddress').textContent =
+                    userAddress.slice(0, 6) + '...' + userAddress.slice(-4);
+
+                document.getElementById('networkBadge').style.display = 'block';
+
+                await loadPresaleData();
+                await loadUserData();
+
+                alert('✅ Wallet connected successfully!');
+
+                // Subscribe to accounts change
+                walletConnectProvider.on("accountsChanged", (accounts) => {
+                    console.log('Account changed:', accounts);
+                    location.reload();
+                });
+
+                // Subscribe to chainId change
+                walletConnectProvider.on("chainChanged", (chainId) => {
+                    console.log('Chain changed:', chainId);
+                    location.reload();
+                });
+
+                // Subscribe to session disconnection
+                walletConnectProvider.on("disconnect", (code, reason) => {
+                    console.log('Disconnected:', code, reason);
+                    location.reload();
+                });
+
+            } catch (error) {
+                console.error('WalletConnect error:', error);
+                if (error.message && error.message.includes('User closed modal')) {
+                    alert('⚠️ Connection cancelled. Please try again.');
+                } else {
+                    alert('❌ Failed to connect via WalletConnect. Please try again.');
+                }
             }
         }
 
